@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Clusters</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <header>Observation System</header>
+  <body class = "centerbody">
+    <h1>Clusters: COVID-19</h1>
+    <div class = "cluster">
+      <h2><%=clusters[0].cluster%></h2>
+      <ul>
+      <li><a target = "_blank" href="<%=clusters[0].url%>"><%=clusters[0].url%></a></li>
+    </ul>
+    </div>
+      <% for (var i = 1; i < clusters.length; i++) { %>
+        <% if(clusters[i].cluster == clusters[i-1].cluster){ %>
+          <ul>
+          <li><a target = "_blank" href="<%=clusters[i].url%>"><%=clusters[i].url%></a></li>
+          </ul>
+        <% } else { %>
+          <div class = "cluster">
+            <h2><%=clusters[i].cluster%></h2>
+            <ul>
+            <li><a target = "_blank" href="<%=clusters[i].url%>"><%=clusters[i].url%></a></li>
+          </ul>
+          </div>
+      <% } %>
+      <% } %>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add Observation</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <header>Observation System</header>
+  <body>
+    <h1><%= title %></h1>
+    <h2>COVID-19</h2>
+    <form id="formAddUser" name="adduser" method="post" action="/adduser">
+      <input id="inputCluster" type="text" placeholder="Cluster" name="cluster" />
+      <input id="inputURL" type="text" placeholder="Url" name="url" />
+      <button class = "urlpage" id="btnSubmit" type="submit">Submit</button>
+      <br>
+      <br>
+    </form>
+    <button onclick="window.location.href='clusters';" class = "urlpage center">See all Clusters</button>
+  </body>
+</html>
