@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Brainstorm Solutions</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <header>Observation System</header>
+  <body>
+    <h1>Innovation Target: <%= title %></h1>
+    <h2>Cluster: <%= cluster %></h2>
+    <h3>Need: <%= need %></h3>
+    <button onclick="window.location.href='/domains/<%= title%>/<%= cluster %>';" class = "backbutton">&#8249;&#8249; All Needs</button>
+    <form id="formAddSolution" name="addsolution" method="post" action="/addsolution">
+      <input id="inputSolution" type="text" placeholder="Possible Solution" name="solution" required/>
+      <button class = "urlpage" id="btnSubmit" type="submit">Submit</button>
+      <input class = "hide" type = "text" value = '<%= title %>' name = "domain"/>
+      <input class = "hide" type = "text" value = '<%= cluster %>' name = "cluster"/>
+      <input class = "hide" type = "text" value = '<%= need %>' name = "need"/>
+      <p id = "submittedsolution" class = "inlineblock submitted">Received &#10004;</p>
+      <br>
+      <br>
+    </form>
+    <form onsubmit="return confirm('Are you sure you want to remove all solutions from this need?');" method = "post" action= "/removesolutions">
+      <button class = "removeall">Remove all Solutions</button>
+      <input class = "hide" type = "text" value = '<%= title %>' name = "domain"/>
+      <input class = "hide" type = "text" value = '<%= cluster %>' name = "cluster"/>
+      <input class = "hide" type = "text" value = '<%= need %>' name = "need"/>
+    </form>
+
+        <% for (var i = 0; i < solutions.length; i++) { %>
+          <form onsubmit="return confirm('Are you sure you want to remove the <%=solutions[i].solution%> solution from this need?');" class = "inlineblock" method = "post" action= "/removesolution">
+            <button class = "deleteneed marginleft">&#10008;</button>
+            <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/>
+            <input class = "hide" type = "text" value = '<%= cluster %>' name = "cluster"/>
+            <input class = "hide" type = "text" value = '<%= need %>' name = "need"/>
+            <input class = "hide" type = "text" value = '<%= solutions[i].solution %>' name = "solution"/>
+          </form>
+          <h4 class = "clusterheader inlineblock"><a onclick="window.location.href='/domains/<%=title%>/<%=cluster%>/<%=need%>/<%= solutions[i].solution %>';">Solution <%=i+1%>:</a></h4> <p class = "solution inlineblock"><%=solutions[i].solution%></p>
+            <br>
+        <% } %>
+
+    <script>
+      $('#submittedsolution').hide();
+      const urlParams = new URLSearchParams(window.location.search);
+      const myParam = urlParams.get('re');
+      if(myParam == "Duplicate_Solution") {
+        alert("You already added that Solution to this Need!");
+      }
+      if(myParam == "Received_Solution") {
+        $('#submittedsolution').show();
+      }
+    </script>
+
+  </body>
+</html>

@@ -1,31 +1,173 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Clusters</title>
+    <title><%= title %></title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <header>Observation System</header>
   <body class = "centerbody">
-    <h1>Clusters: COVID-19</h1>
-    <div class = "cluster">
-      <h2><%=clusters[0].cluster%></h2>
-      <ul>
-      <li><a target = "_blank" href="<%=clusters[0].url%>"><%=clusters[0].url%></a></li>
-    </ul>
-    </div>
-      <% for (var i = 1; i < clusters.length; i++) { %>
-        <% if(clusters[i].cluster == clusters[i-1].cluster){ %>
-          <ul>
-          <li><a target = "_blank" href="<%=clusters[i].url%>"><%=clusters[i].url%></a></li>
-          </ul>
-        <% } else { %>
-          <div class = "cluster">
-            <h2><%=clusters[i].cluster%></h2>
+    <h1>Innovation Target: <%= title %></h1>
+    <button onclick="window.location.href='/domains';" class = "backbutton">&#8249;&#8249; All Innovation Targets</button>
+    <h2>Add Observation URL</h2>
+    <form id="formAddUser" name="addcluster" method="post" action="/addcluster">
+      <input id="inputCluster" type="text" placeholder="Cluster" name="cluster" required/>
+      <input id="inputURL" type="text" placeholder="Url" name="url" required/>
+      <button class = "urlpage" id="btnSubmit" type="submit">Submit</button>
+      <input class = "hide" type = "text" value = '<%= title %>' name = "title"/>
+      <p id = "submittedurl" class = "inlineblock submitted">Received &#10004;</p>
+      <br>
+      <br>
+    </form>
+
+    <%var i = 0;%>
+    <%while (i < clusters.length){ %>
+      <%if (i == clusters.length-1){ %>
+        <h2 class = "clusterheader inlineblock"><a onclick="window.location.href='/domains/<%=title%>/<%=clusters[i].cluster%>';">Cluster: <%=clusters[i].cluster%></a></h2>
+        <form onsubmit="return confirm('Are you sure you want to remove the <%=clusters[i].cluster%> cluster?');" class = "inlineblock" method = "post" action= "/removecluster">
+          <button class = "inlineblock delete smaller">&#10060;</button> 
+          <input class = "hide" type = "text" value = '<%=clusters[i].cluster%>' name = "cluster"/>
+          <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/>
+        </form>
+            <div class = "scrolling-wrapper">
+              <a target = "_blank" href="<%=clusters[i].url%>">
+                <div class = "white">
+                  <img src = "/images/suits.jpg">
+                <form onsubmit="return confirm('Are you sure you want to remove this link from the <%=clusters[i].cluster%> cluster?');" method = "post" action= "/removeurl">
+                <button class = "remove">Remove</button> 
+                <input class = "hide" type = "text" value = '<%=clusters[i].url%>' name = "url"/>
+                <input class = "hide" type = "text" value = '<%=clusters[i].cluster%>' name = "cluster"/>
+                <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/></li>
+              </form>
+            </div></a>
+            </div>
+            <% i++ %>
+      <% } else { %>
+        <% if(clusters[i].cluster == clusters[i+1].cluster){ %>
+          <h2 class = "clusterheader inlineblock"><a onclick="window.location.href='/domains/<%=title%>/<%=clusters[i].cluster%>';">Cluster: <%=clusters[i].cluster%></a></h2>
+        <form onsubmit="return confirm('Are you sure you want to remove the <%=clusters[i].cluster%> cluster?');" class = "inlineblock" method = "post" action= "/removecluster">
+          <button class = "inlineblock delete smaller">&#10060;</button> 
+          <input class = "hide" type = "text" value = '<%=clusters[i].cluster%>' name = "cluster"/>
+          <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/>
+        </form>
+          <div class = "scrolling-wrapper">
+            <a target = "_blank" href="<%=clusters[i].url%>"><div class = "white">
+              <img src = "/images/suits.jpg">
+              <form onsubmit="return confirm('Are you sure you want to remove this link from the <%=clusters[i].cluster%> cluster?');" method = "post" action= "/removeurl">
+              <button class = "remove">Remove</button> 
+              <input class = "hide" type = "text" value = '<%=clusters[i].url%>' name = "url"/>
+              <input class = "hide" type = "text" value = '<%=clusters[i].cluster%>' name = "cluster"/>
+              <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/></li>
+            </form>
+          </div></a>
+          <%while (clusters[i].cluster == clusters[i+1].cluster){ %>
+            <a target = "_blank" href="<%=clusters[i+1].url%>"><div class = "white">
+              <img src = "/images/suits.jpg">
+              <form onsubmit="return confirm('Are you sure you want to remove this link from the <%=clusters[i+1].cluster%> cluster?');" method = "post" action= "/removeurl">
+              <button class = "remove">Remove</button> 
+              <input class = "hide" type = "text" value = '<%=clusters[i+1].url%>' name = "url"/>
+              <input class = "hide" type = "text" value = '<%=clusters[i+1].cluster%>' name = "cluster"/>
+              <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/></li>
+            </form>
+          </div></a>
+          <% i ++ %>
+          <% if(i == clusters.length-1){ %>
+            <% break %>
+            <% } %>
+          <% } %>
+        </div>
+          <% i ++ %>
+          <% } else{ %>
+            <h2 class = "clusterheader inlineblock"><a onclick="window.location.href='/domains/<%=title%>/<%=clusters[i].cluster%>';">Cluster: <%=clusters[i].cluster%></a></h2>
+        <form onsubmit="return confirm('Are you sure you want to remove the <%=clusters[i].cluster%> cluster?');" class = "inlineblock" method = "post" action= "/removecluster">
+          <button class = "inlineblock delete smaller">&#10060;</button> 
+          <input class = "hide" type = "text" value = '<%=clusters[i].cluster%>' name = "cluster"/>
+          <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/>
+        </form>
+            <div class = "scrolling-wrapper">
+              <a target = "_blank" href="<%=clusters[i].url%>"><div class = "white">
+                <img src = "/images/suits.jpg">
+                <form onsubmit="return confirm('Are you sure you want to remove this link from the <%=clusters[i].cluster%> cluster?');"  method = "post" action= "/removeurl">
+                <button class = "remove">Remove</button> 
+                <input class = "hide" type = "text" value = '<%=clusters[i].url%>' name = "url"/>
+                <input class = "hide" type = "text" value = '<%=clusters[i].cluster%>' name = "cluster"/>
+                <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/></li>
+              </form>
+            </div></a>
+            </div>
+            <% i ++ %>
+            <% } %>
+            <% } %>
+            <% } %>
+
+    <!--<% if(clusters.length > 0){ %>
+      <div class = "cluster">
+        <h2 class = "clusterheader inlineblock"><a onclick="window.location.href='/domains/<%=title%>/<%=clusters[0].cluster%>';"><%=clusters[0].cluster%></a></h2>
+        <form onsubmit="return confirm('Are you sure you want to remove the <%=clusters[0].cluster%> cluster?');" class = "inlineblock" method = "post" action= "/removecluster">
+          <button class = "inlineblock delete smaller">&#10060;</button> 
+          <input class = "hide" type = "text" value = '<%=clusters[0].cluster%>' name = "cluster"/>
+          <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/>
+        </form>
+        <div class = "scrolling-wrapper">
+        <div class = "white">
+          <form onsubmit="return confirm('Are you sure you want to remove this link from the <%=clusters[0].cluster%> cluster?');" class = "inlineblock" method = "post" action= "/removeurl">
+          <a class = "inlineblock" target = "_blank" href="<%=clusters[0].url%>"><%=clusters[0].url%></a>
+          <button class = "inlineblock remove">Remove</button> 
+          <input class = "hide" type = "text" value = '<%=clusters[0].url%>' name = "url"/>
+          <input class = "hide" type = "text" value = '<%=clusters[0].cluster%>' name = "cluster"/>
+          <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/></li>
+        </form>
+      </div>
+      </div>
+      </div>
+        <% for (var i = 1; i < clusters.length; i++) { %>
+          <% if(clusters[i].cluster == clusters[i-1].cluster){ %>
             <ul>
-            <li><a target = "_blank" href="<%=clusters[i].url%>"><%=clusters[i].url%></a></li>
-          </ul>
-          </div>
-      <% } %>
-      <% } %>
+              <li><form onsubmit="return confirm('Are you sure you want to remove this link from the <%=clusters[i].cluster%> cluster?');" class = "inlineblock" method = "post" action= "/removeurl">
+                <a class = "inlineblock" target = "_blank" href="<%=clusters[i].url%>"><%=clusters[i].url%></a>
+                <button class = "inlineblock remove">Remove</button> 
+                <input class = "hide" type = "text" value = '<%=clusters[i].url%>' name = "url"/>
+                <input class = "hide" type = "text" value = '<%=clusters[i].cluster%>' name = "cluster"/>
+                <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/></li>
+              </form>
+            </ul>
+          <% } else { %>
+            <div class = "cluster">
+              <h2 class = "clusterheader inlineblock"><a onclick="window.location.href='/domains/<%=title%>/<%=clusters[i].cluster%>';"><%=clusters[i].cluster%></a></h2>
+              <form onsubmit="return confirm('Are you sure you want to remove the <%=clusters[i].cluster%> cluster?');" class = "inlineblock" method = "post" action= "/removecluster">
+                <button class = "inlineblock delete smaller">&#10060;</button>
+                <input class = "hide" type = "text" value = '<%=clusters[i].cluster%>' name = "cluster"/>
+                <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/>
+              </form>
+              <ul>
+              <li><li><form onsubmit="return confirm('Are you sure you want to remove this link from the <%=clusters[i].cluster%> cluster?');" class = "inlineblock" method = "post" action= "/removeurl">
+                <a class = "inlineblock" target = "_blank" href="<%=clusters[i].url%>"><%=clusters[i].url%></a>
+                <button class = "inlineblock remove">Remove</button> 
+                <input class = "hide" type = "text" value = '<%=clusters[i].url%>' name = "url"/>
+                <input class = "hide" type = "text" value = '<%=clusters[i].cluster%>' name = "cluster"/>
+                <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/></li>
+              </form>
+            </ul>
+            </div>
+        <% } %>
+        <% } %>
+        <% } %> -->
+
+    
+        <script>
+          $('#submittedurl').hide();
+          const urlParams = new URLSearchParams(window.location.search);
+          const myParam = urlParams.get('re');
+          if(myParam == "Duplicate_URL") {
+            alert("You already added that URL to that cluster!");
+          }
+          if(myParam == "Received_URL") {
+            $('#submittedurl').show();
+          }
+        </script>
   </body>
 </html>
