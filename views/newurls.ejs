@@ -1,20 +1,139 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Add Observation</title>
+    <title><%= title %></title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <header>Observation System</header>
-  <body>
-    <h1><%= title %></h1>
-    <h2>COVID-19</h2>
-    <form id="formAddUser" name="adduser" method="post" action="/adduser">
-      <input id="inputCluster" type="text" placeholder="Cluster" name="cluster" />
-      <input id="inputURL" type="text" placeholder="Url" name="url" />
+  <body class = "centerbody">
+    <h1>Innovation Target: <%= title %></h1>
+    <button onclick="window.location.href='/domains';" class = "backbutton">&#8249;&#8249; All Innovation Targets</button>
+    <h2>Add Observation URL</h2>
+    <form class = "inlineblock" id="formAddURL" name="addurl" method="post" action="/addurl">
+      <div class="mb-3">
+      <input class="urlinput" type="text" placeholder = "Insert URL" name="url" required/>
+      <input class = "hide" type = "text" value = '<%= title %>' name = "title"/>
+      <input class = "hide" type = "text" value = 'urls' name = "cluster"/>
+    </div>
+    <input type="submit" value="Submit" class="btn btn-primary btn-block">
+    </form>
+    <p class = "inlineblock or">OR</p>
+    <form class ="inlineblock" action="/uploadasset" method="POST" enctype="multipart/form-data">
+      <div class="custom-file mb-3">
+        <label for="file" class="custom-file-label">Insert Asset</label>
+        <input type="file" name="file" id="file" class="custom-file-input">
+        <input type = "text" name = "title" class = "hide" value = "<%= title %>">
+        <input class = "hide" type = "text" value = 'urls' name = "cluster"/>
+      </div>
+      <input type="submit" value="Submit" class="btn btn-primary btn-block">
+    </form>
+    <br>
+    <br>
+    <button class = "addcluster" onclick = "openform()"><i class="fa fa-plus" aria-hidden="true"></i><br>Cluster</button>
+    <div id="formAddCluster">
+      <div class = "form">
+        <h2>Add a New Cluster to: <%= title %></h2>
+    <form id = "addclusterform" name="addcluster" method="post" action="/addcluster">
+      <input id="inputCluster" type="text" placeholder="Cluster" name="cluster" required/>
       <button class = "urlpage" id="btnSubmit" type="submit">Submit</button>
+      <input class = "hide" type = "text" value = '<%= title %>' name = "title"/>
+      <input class = "hide" type = "text" value = 'clusters' name = "url"/>
       <br>
       <br>
     </form>
-    <button onclick="window.location.href='clusters';" class = "urlpage center">See all Clusters</button>
+    <button onclick = "closeform()"><i class="fa fa-times" aria-hidden="true"></i><br></button>
+  </div>
+</div>
+<% var count = 0; %>
+<% for (var i = 0; i < clusters.length; i++) { %>
+  <% if (clusters[i].cluster == 'urls') { %>
+  <% count ++; %>
+  <% }%>
+  <% } %>
+  <% if(files){ %>
+    <% files.forEach(function(file) { %>
+      <% if(file.metadata.title == title && file.metadata.cluster == 'urls') { %>
+        <% count ++; %>
+        <% } %>
+        <% }) %>
+        <%}%>
+
+    <h3>Number of Assets Added: <%= count%> <button id = "button" class = "assets" onclick = "buttontext()">Show all Assets</button></h3>
+    <div id = "urls">
+    <% for (var i = 0; i < clusters.length; i++) { %>
+      <% if (clusters[i].cluster == 'urls') { %>
+      <a target = "_blank" href = "<%=clusters[i].url%>" class="inlineblock tiptext"><%=clusters[i].url%>
+        <iframe class="description" src="<%=clusters[i].url%>"></iframe>
+      </a> <form class = "inlineblock" onsubmit="return confirm('Are you sure you want to remove this link?');" method = "post" action= "/removeurl">
+        <button class = "remove">Remove</button> 
+        <input class = "hide" type = "text" value = '<%=clusters[i].url%>' name = "url"/>
+        <input class = "hide" type = "text" value = "urls" name = "cluster"/>
+        <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/>
+      </form><br>
+      <%}%>
+    <%}%>
+    <% if(files){ %>
+      <% files.forEach(function(file) { %>
+        <% if(file.metadata.title == title && file.metadata.cluster == 'urls') { %>
+        <div class="card card-body inlineblock mb-3 ml-5">
+          <% if(file.isImage) { %>
+            <a target = "_blank" href="/image/<%= file.filename %>" class = "solutionimage" alt="">
+              <img src="/image/<%= file.filename %>" class = "solutionimage" alt="">
+              </a>
+          
+            <% } else { %>
+              <a target = "_blank" href="/image/<%= file.filename %>" class = "solutionimage tiptext"" alt="">
+                <iframe class="description" src="/image/<%= file.filename %>"></iframe><%= file.filename %></a>
+                <% } %>
+                  <form onsubmit="return confirm('Are you sure you want to remove this Asset from <%= title%>');" method="POST" action="/files/<%= file._id %>?_method=DELETE">
+                    <button class="btn btn-danger btn-block mt-4">Remove</button>
+                    <input type = "text" name = "domain" class = "hide" value = "<%= title %>">
+                    <input type = "text" name = "cluster" class = "hide" value = "urls">
+                    <input class = "hide" type = "text" value = 'domainpage' name = "whereto"/>
+                  </form>
+        </div>
+        <% } %>
+        <% }) %>
+          <% } else { %>
+            
+            <% } %>
+  </div>
+
+  <img class= "wordcloud" src = "/images/<%=title%>.png">
+
+      <% if(clusters.length != 0) { %>
+      <div class = "container-fluid">
+        <h2 class = "inlineblock specialh2">Clusters:</h2> <button onclick="window.location.href='/editdomain/<%=title%>';" class = "inlineblock editall">Edit Clusters</button>
+        <div class = "row">
+      <% for (var i = 0; i < clusters.length; i++) { %>
+        <% if (clusters[i].url == 'clusters') { %>
+        <div class = "center col-lg-4">
+          <button onclick="window.location.href='/domains/<%=title%>/<%=clusters[i].cluster%>';" class = "inlineblock clusterbutton"><span><%=clusters[i].cluster%></span></button>
+        </div>
+      <% } %>
+      <% } %>
+      <%}%>
+    </div>
+  </div>
+
+    
+        <script>
+          $('#submittedurl').hide();
+          const urlParams = new URLSearchParams(window.location.search);
+          const myParam = urlParams.get('re');
+          if(myParam == "Duplicate_URL") {
+            alert("You already added that URL!");
+          }
+          if(myParam == "Duplicate_Cluster") {
+            alert("You already added that Cluster!");
+          }
+        </script>
+
+        <script src = "/javascripts/iframe.js"></script>
   </body>
 </html>

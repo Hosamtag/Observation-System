@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit Needs</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  <header>Observation System</header>
+  <body>
+    <h1>Edit <%=cluster %> Needs</h1>
+    <button onclick="window.location.href='/domains/<%=title%>/<%=cluster%>';" class = "backbutton">&#8249;&#8249; All <%=cluster%> Needs</button>
+    <div class = "container-fluid">
+      <div class = "row">
+        <% for (var i = 0; i < needs.length; i++) { %>
+          <div class = "center col-lg-12">
+            <button class = "inlineblock needbutton"><%=needs[i].need%></button>
+            <form onsubmit="return confirm('Are you sure you want to remove the <%=needs[i].need%> need from this cluster?');" class = "inlineblock" method = "post" action= "/removeneed">
+              <button class = "deleteneed">&#10008;</button>
+              <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/>
+              <input class = "hide" type = "text" value = '<%= cluster %>' name = "cluster"/>
+              <input class = "hide" type = "text" value = '<%= needs[i].need %>' name = "need"/>
+            </form>
+            <button class = "inlineblock edit" onclick = "openedit('<%=i%>')">Update Need</button>
+            <div id = "<%= i %>" style = "display: none;">
+              <h2>Update <%=needs[i].need%> Need</h2>
+              <form id = "addclusterform" name="addcluster" method="post" action="/editneed">
+                <input id="inputCluster" type="text" placeholder="Change to..." name="newneed" required/>
+                <input class = "hide" type = "text" value = '<%=needs[i].need%>' name = "oldneed"/>
+                <input class = "hide" type = "text" value = '<%=cluster%>' name = "cluster"/>
+                <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/>
+                <br>
+                <button class = "urlpage" id="btnSubmit" type="submit">Submit</button>
+                
+                <br>
+                <br>
+              </form>
+        
+          </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+     
+      
+</div>
+    </div>
+<script src = "/javascripts/iframe.js"></script>
+  </body>
+</html>

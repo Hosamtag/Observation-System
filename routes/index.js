@@ -12,6 +12,7 @@ const methodOverride = require('method-override');
 router.use(bodyParser.json());
 router.use(methodOverride('_method'));
 
+
 const mongoURI = 'mongodb+srv://hosam:hosam@mongouploads.ipcfv.mongodb.net/MongoUploads?retryWrites=true&w=majority'
 //Create mongo connection
 
@@ -36,9 +37,11 @@ const storage = new GridFsStorage({
           if (err) {
             return reject(err);
           }
-          const filename = buf.toString('hex') + path.extname(file.originalname);
+          const filename = file.originalname;
+          const metadata = req.body;
           const fileInfo = {
             filename: filename,
+            metadata: metadata,
             bucketName: 'uploads'
           };
           resolve(fileInfo);
@@ -74,8 +77,7 @@ router.get('/domains/:domain/:cluster/:need/:solution', (req, res) => {
 // @route POST /upload
 // @desc  Uploads file to DB
 router.post('/upload', upload.single('file'), (req, res) => {
-  // res.json({ file: req.file });
-
+  //res.json({ file: req.file })
   var domains = '/domains';
   var domain = req.body.domain;
   var cluster = req.body.cluster;
@@ -83,6 +85,15 @@ router.post('/upload', upload.single('file'), (req, res) => {
   var solution = req.body.solution;
   var url = domains + '/' + domain + '/' + cluster + '/' + need + '/' + solution
   res.redirect(url);
+});
+
+router.post('/uploadasset', upload.single('file'), (req, res) => {
+  //res.json({ file: req.file })
+  var title = req.body.title;
+  var domain = 'domains/';
+  var combined = domain + title;
+
+  res.redirect(combined);
 });
 
 // @route GET /files
@@ -127,8 +138,8 @@ router.get('/image/:filename', (req, res) => {
       });
     }
 
-    // Check if image
-    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+  
+    if (file) {
       // Read output to browser
       const readstream = gfs.createReadStream(file.filename);
       readstream.pipe(res);
@@ -147,13 +158,22 @@ router.delete('/files/:id', (req, res) => {
     if (err) {
       return res.status(404).json({ err: err });
     }
-    var domains = '/domains';
+    if(req.body.whereto == "domainpage"){
+      var title = req.body.domain;
+  var domain = '/domains/';
+  var combined = domain + title;
+
+  res.redirect(combined);
+    } else{
+      var domains = '/domains';
   var domain = req.body.domain;
   var cluster = req.body.cluster;
   var need = req.body.need;
   var solution = req.body.solution;
   var url = domains + '/' + domain + '/' + cluster + '/' + need + '/' + solution
   res.redirect(url);
+    }
+    
   });
 });
 
@@ -173,16 +193,66 @@ router.get('/domains', function(req, res, next) {
   });
 });
 
+/*GET edit page */
+router.get('/edit', function(req,res,next){
+  var db = req.db;
+  var collection = db.get('domains');
+  collection.find({},{},function(e,docs){
+    res.render('edit',{
+      "targets":docs
+    });
+  });
+});
+router.get('/editdomain/:domain', function(req,res,next){
+  var db = req.db;
+  var collection = db.get('clusters');
+  collection.find({"domain": req.params.domain.toLocaleUpperCase()},{},function(e,docs){
+    res.render('edit-domain',{
+      "clusters":docs, title: req.params.domain.toLocaleUpperCase()
+    });
+  });
+});
+router.get('/editcluster/:domain/:cluster', function(req,res,next){
+  var db = req.db;
+  var collection = db.get('needs');
+  collection.find({"domain": req.params.domain.toLocaleUpperCase(), "cluster": req.params.cluster},{},function(e,docs){
+    res.render('edit-cluster',{
+      "needs":docs, title: req.params.domain.toLocaleUpperCase(), cluster: req.params.cluster
+    });
+  });
+});
+router.get('/editneed/:domain/:cluster/:need', function(req,res,next){
+  var db = req.db;
+  var collection = db.get('solutions');
+  collection.find({"domain": req.params.domain.toLocaleUpperCase(), "cluster": req.params.cluster, "need": req.params.need},{},function(e,docs){
+    res.render('edit-need',{
+      "concepts":docs, title: req.params.domain.toLocaleUpperCase(), cluster: req.params.cluster, need: req.params.need
+    });
+  });
+});
+
+
 /* Get Clusters page based off user input*/
 router.get("/domains/:domain", (req, res) => {
   var db = req.db;
   var collection = db.get("clusters");
-  collection.find({"domain": req.params.domain.toLocaleUpperCase()}, {sort: 'cluster'}, function(e,docs){
-    res.render("clusters", {
-      "clusters": docs, title: req.params.domain.toLocaleUpperCase() 
+  gfs.files.find().toArray((err, files) => {
+  if (!files || files.length === 0) {
+  collection.find({"domain": req.params.domain.toLocaleUpperCase()}, {}, function(e,docs){
+    res.render("newurls", {"clusters": docs, files: false, title: req.params.domain.toLocaleUpperCase()})});
+  } else{
+    files.map(file => {
+      if (
+        file.contentType === 'image/jpeg' ||
+        file.contentType === 'image/png'
+      ) {
+        file.isImage = true;
+      } else {
+        file.isImage = false;
+      }
     });
-  });
-});
+    collection.find({"domain": req.params.domain.toLocaleUpperCase()}, {}, function(e,docs){
+      res.render('newurls', {"clusters": docs, files: files, title: req.params.domain.toLocaleUpperCase()})})}})});
 
 router.get("/domains/:domain/:cluster", (req, res) => {
   var db = req.db;
@@ -273,7 +343,7 @@ router.post('/removeneed', function(req,res){
   var need = req.body.need;
   collection.remove({"domain": domain, "cluster": cluster, "need": need});
   collectionsolutions.remove({"domain": domain, "cluster": cluster, "need": need});
-  var redirect = "domains/" + domain + '/' + cluster;
+  var redirect = "editcluster/" + domain + '/' + cluster;
   res.redirect(redirect);
 });
 
@@ -286,7 +356,7 @@ router.post('/removesolution', function(req,res){
   var need = req.body.need;
   var solution = req.body.solution;
   collection.remove({"domain": domain, "cluster": cluster, "need": need, "solution": solution});
-  var redirect = "domains/" + domain + '/' + cluster + '/' + need;
+  var redirect = "editneed/" + domain + '/' + cluster + '/' + need;
   res.redirect(redirect);
 });
 
@@ -303,7 +373,81 @@ router.post('/removequery', function(req,res){
   collectioncluster.remove({"domain": domainname});
   collectionneeds.remove({"domain": domainname});
   collectionsolutions.remove({"domain": domainname});
-  res.redirect("domains");
+  res.redirect("edit");
+});
+
+/* POST to Edit one Domain */
+router.post('/editdomain', function(req,res){
+  var db = req.db;
+
+  var domainname = req.body.olddomain;
+  var newdomain = req.body.newdomain;
+
+  var collection = db.get('domains');
+  var collectioncluster = db.get('clusters');
+  var collectionneeds = db.get('needs');
+  var collectionsolutions = db.get('solutions');
+  collection.update({"domain": domainname}, {$set: {"domain": newdomain}}, {multi: true});
+  collectioncluster.update({"domain": domainname}, {$set: {"domain": newdomain}}, {multi: true});
+  collectionneeds.update({"domain": domainname}, {$set:{"domain": newdomain}}, {multi: true});
+  collectionsolutions.update({"domain": domainname}, {$set: {"domain": newdomain}}, {multi: true});
+  res.redirect("edit");
+});
+
+/* POST to Edit one Cluster */
+router.post('/editcluster', function(req,res){
+  var db = req.db;
+
+  var clustername = req.body.oldcluster;
+  var newcluster = req.body.newcluster;
+  var domain = req.body.domain;
+
+  var url = "/editdomain/" + domain;
+
+  var collectioncluster = db.get('clusters');
+  var collectionneeds = db.get('needs');
+  var collectionsolutions = db.get('solutions');
+  collectioncluster.update({"cluster": clustername}, {$set: {"cluster": newcluster}}, {multi: true});
+  collectionneeds.update({"cluster": clustername}, {$set:{"cluster": newcluster}}, {multi: true});
+  collectionsolutions.update({"cluster": clustername}, {$set: {"cluster": newcluster}}, {multi: true});
+  res.redirect(url);
+});
+
+/* POST to Edit one Need */
+router.post('/editneed', function(req,res){
+  var db = req.db;
+
+  var oldneed = req.body.oldneed;
+  var newneed= req.body.newneed;
+  var cluster = req.body.cluster;
+  var domain = req.body.domain;
+
+  var url = "/editcluster/" + domain + '/' + cluster;
+
+  var collectionneeds = db.get('needs');
+  var collectionsolutions = db.get('solutions');
+  collectionneeds.update({"need": oldneed}, {$set:{"need": newneed}}, {multi: true});
+  collectionsolutions.update({"need": oldneed}, {$set: {"need": newneed}}, {multi: true});
+
+  res.redirect(url);
+});
+
+/* POST to Edit one Concept */
+router.post('/editconcept', function(req,res){
+  var db = req.db;
+
+  var need= req.body.need;
+  var cluster = req.body.cluster;
+  var domain = req.body.domain;
+  var oldconcept = req.body.oldconcept;
+  var newconcept = req.body.newconcept;
+
+  var url = "/editneed/" + domain + '/' + cluster + '/' + need;
+
+  var collectionsolutions = db.get('solutions');
+  collectionsolutions.update({"solution": oldconcept}, {$set: {"solution": newconcept}}, {multi: true});
+
+  res.redirect(url);
 });
 
 /* POST to Remove a Cluster */
@@ -312,7 +456,7 @@ router.post('/removecluster', function(req,res){
   var domainname = req.body.domain;
   var clustername = req.body.cluster;
 
-  var domain = 'domains/'
+  var domain = 'editdomain/'
 
   var combined = domain + domainname;
 
@@ -341,6 +485,7 @@ router.post('/removeurl', function(req,res){
   res.redirect(combined);
 });
 
+
 /* POST to Add Domain Service */
 router.post('/adddomain', function(req, res) {
 
@@ -349,6 +494,14 @@ router.post('/adddomain', function(req, res) {
 
   // Get our form values. These rely on the "name" attributes
   var domain = req.body.domain;
+
+    var spawn = require("child_process").spawn;
+    var process = spawn('python',["./public/images/hello.py",
+  domain]);
+  process.stdout.on('data', function(data){
+    res.send(data.toString());
+  });
+  
 
   // Set our collection
   var collection = db.get('domains');
@@ -369,15 +522,15 @@ router.post('/adddomain', function(req, res) {
   });
 
 });
-/* POST to Add Cluster Service */
-router.post('/addcluster', function(req, res) {
+/* POST to Add URL Service */
+router.post('/addurl', function(req, res) {
 
     // Set our internal DB variable
     var db = req.db;
 
     // Get our form values. These rely on the "name" attributes
-    var cluster = req.body.cluster;
     var url = req.body.url;
+    var cluster = req.body.cluster;
     var title = req.body.title;
 
     var domain = 'domains/'
@@ -401,10 +554,47 @@ router.post('/addcluster', function(req, res) {
         }
         else {
             // And forward to success page
-            var newurl = combined + '?re='  + encodeURIComponent('Received_URL');
-            res.redirect(newurl);
+            res.redirect(combined);
         }
     });
+
+});
+
+/* POST to Add URL Service */
+router.post('/addcluster', function(req, res) {
+
+  // Set our internal DB variable
+  var db = req.db;
+
+  // Get our form values. These rely on the "name" attributes
+  var cluster = req.body.cluster;
+  var url = req.body.url;
+  var title = req.body.title;
+
+  var domain = 'domains/'
+
+  var combined = domain + title;
+
+  // Set our collection
+  var collection = db.get('clusters');
+
+  // Submit to the DB
+  collection.insert({
+      "domain": title,
+      "cluster" : cluster,
+      "url" : url
+  }, function (err, doc) {
+      if (err) {
+          // If it failed, return error
+          //res.send("You already added that URL to that cluster!");
+          var errorurl = combined + '?re='  + encodeURIComponent('Duplicate_Cluster');
+          res.redirect(errorurl);
+      }
+      else {
+          // And forward to success page
+          res.redirect(combined);
+      }
+  });
 
 });
 

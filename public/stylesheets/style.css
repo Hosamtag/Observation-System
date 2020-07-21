@@ -20,6 +20,18 @@ a{
   color: #00B7FF;
   cursor: pointer;
 }
+.tiptext {
+  color:#069; 
+  cursor:pointer;
+}
+.description {
+  display:none;
+  position:absolute;
+  border:1px solid #000;
+  width:400px;
+  height:400px;
+  z-index: 100;
+}
 button{
   background-color: white;
   border-color: white;
@@ -37,9 +49,63 @@ h1{
   font-size: 40px;
   margin-bottom: 25px;
 }
+#urls{
+  display: none;
+}
+.assets{
+  font-size: 23px;
+  margin-left: 15px;
+}
+.addcluster{
+  position: absolute;
+  right: 100px;
+  top: 125px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgb(41, 41, 206);
+  height: 75px;
+  width: 75px;
+  color :white;
+  font-size: 17px;
+}
+#formAddCluster{
+  height:100%;
+  width:0;
+  position: fixed;
+  z-index: 100;
+  top:0;
+  left:0;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,.8);
+  overflow-x: hidden;
+}
+.form{
+    position: absolute;
+    top: 35%;
+    left: 35%;
+    background-color: white;
+    height: 250px;
+    width: 500px; 
+    border-radius: 25px;
+}
+.form h2{
+  margin-top: 20px;
+}
+.fa-plus, .fa-times{
+  font-size: 35px;
+  margin-bottom: none;
+}
+.addcluster:hover{
+  color: white;
+  background-color: rgb(16, 16, 153);
+}
 h2{
   text-align: center;
   margin-bottom: 25px;
+}
+.specialh2{
+  margin-bottom: 0px !important;
+  margin-top: 20px;
 }
 h3{
   text-align: center;
@@ -59,6 +125,9 @@ form{
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+.centertext{
+  text-align: center;
 }
 
 .login{
@@ -91,9 +160,27 @@ form{
   background-color: #F6f6f6;
   border-color: red;
   padding: 5px;
+  border-radius: 5px;
 }
 .removeall:hover{
   background-color: red;
+  color: white;
+}
+
+.editall{
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 22px;
+  color: rgb(223, 136, 5);
+  background-color: #F6f6f6;
+  border-color: rgb(223, 136, 5);
+  padding: 5px;
+  border-radius: 5px;
+}
+.editall:hover{
+  background-color: rgb(223, 136, 5);
   color: white;
 }
 
@@ -107,10 +194,20 @@ form{
   color: rgb(218, 40, 40);
   border: none;
 }
+.edit{
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 23px;
+  background-color: #F6F6F6;
+  color: rgb(223, 136, 5);
+  border: none;
+}
 .remove{
   font-size: 17px;
   color: rgb(218, 40, 40);
-  background-color: white;
+  background-color: #f6f6f6;
   border: none;
 }
 .remove:hover{
@@ -151,12 +248,26 @@ form{
   margin-top: 50px !important;
   padding: 0 20px
 }
-.ideabutton:hover{
+.ideabutton:hover, .clusterbutton:hover{
   color: rgb(16, 16, 153);
   background-color: #f6f6f6;
   transition-duration: .3s;
 }
-.needsbutton{
+.clusterbutton{
+  cursor: pointer;
+  min-width: 250px;
+  height: 65px;
+  text-align: left;
+  font-size: 28px;
+  background-color: rgb(16, 16, 153);
+  border: 2px solid rgb(16, 16, 153);
+  border-radius: 35px;
+  color: white;
+  text-align: center;
+  margin-top: 50px !important;
+  padding: 0 20px
+}
+.needsbutton, .needbutton{
   cursor: pointer;
   min-height: 65px;
   width: 300px;
@@ -172,7 +283,7 @@ form{
   display:none
 }
 .needsbutton:hover:before {
-  content:"Brainstorm Solutions"
+  content:"Brainstorm Concepts"
 }
 .paddingbottom{
   padding-bottom: 55px;
@@ -242,4 +353,29 @@ form{
 }
 .solutionimage{
   max-height: 300px;
+}
+
+.urlinput{
+  text-align: center;
+  width: 300px;
+}
+
+.conceptinput{
+  text-align: center;
+  width: 550px;
+  height: 40px;
+}
+
+.or{
+  font-weight: 600;
+  font-size: 55px;
+  padding:0 10px;
+}
+
+.bigger{
+  font-size: 25px;
+}
+
+.wordcloud{
+  width: 1000px;
 }

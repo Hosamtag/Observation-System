@@ -12,22 +12,25 @@
   <body>
     <h1>Innovation Targets</h1>
     <form id="formAddDomain" name="adddomain" method="post" action="/adddomain">
-      <input id="inputDomain" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" type="text" placeholder="Domain" name="domain" required/>
+      <input id="inputDomain" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" type="text" placeholder="Innovation Target" name="domain" required/>
       <button class = "urlpage" id="btnSubmit" type="submit">Submit</button>
       <p id = "submitteddomain" class = "inlineblock submitted">Received &#10004;</p>
       <br>
       <br>
     </form>
-    <form onsubmit="return confirm('Are you sure you want to remove all domains?');" method = "post" action= "/removequeries">
-      <button class = "removeall">Remove all Domains</button>
+    <div class = "center">
+    <form onsubmit="return confirm('Are you sure you want to remove all domains?');" class = "inlineblock" method = "post" action= "/removequeries">
+      <button class = "inlineblock removeall">Remove all Targets</button>
     </form>
+    <button onclick="window.location.href='/edit';" class = "inlineblock editall">Edit Targets</button>
+  </div>
       <div class = "paddingbottom">
             <% for (var i = 0; i < targets.length; i++) { %>
               <div class = "center">
                 <button onclick="window.location.href='domains/<%=targets[i].domain%>';" class = "inlineblock ideabutton"><%=targets[i].domain%></button>
-                <form onsubmit="return confirm('Are you sure you want to remove the <%=targets[i].domain%> domain?');" class = "inlineblock" method = "post" action= "/removequery">
+                <!--<form onsubmit="return confirm('Are you sure you want to remove the <%=targets[i].domain%> domain?');" class = "inlineblock" method = "post" action= "/removequery">
                   <button class = "inlineblock delete">&#10008;</button> <input class = "hide" type = "text" value = '<%=targets[i].domain%>' name = "domain"/>
-                </form>
+                </form>-->
               </div>
               
             <% } %>

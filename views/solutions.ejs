@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Brainstorm Solutions</title>
+    <title>Brainstorm Concepts</title>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
@@ -16,7 +16,7 @@
     <h3>Need: <%= need %></h3>
     <button onclick="window.location.href='/domains/<%= title%>/<%= cluster %>';" class = "backbutton">&#8249;&#8249; All Needs</button>
     <form id="formAddSolution" name="addsolution" method="post" action="/addsolution">
-      <input id="inputSolution" type="text" placeholder="Possible Solution" name="solution" required/>
+      <input id="inputSolution" class = "conceptinput" type="text" placeholder="Possible Concept" name="solution" required/>
       <button class = "urlpage" id="btnSubmit" type="submit">Submit</button>
       <input class = "hide" type = "text" value = '<%= title %>' name = "domain"/>
       <input class = "hide" type = "text" value = '<%= cluster %>' name = "cluster"/>
@@ -25,22 +25,19 @@
       <br>
       <br>
     </form>
-    <form onsubmit="return confirm('Are you sure you want to remove all solutions from this need?');" method = "post" action= "/removesolutions">
-      <button class = "removeall">Remove all Solutions</button>
+    <div class = "center">
+    <form onsubmit="return confirm('Are you sure you want to remove all concepts from this need?');" class= "inlineblock" method = "post" action= "/removesolutions">
+      <button class = "removeall">Remove all Concepts</button>
       <input class = "hide" type = "text" value = '<%= title %>' name = "domain"/>
       <input class = "hide" type = "text" value = '<%= cluster %>' name = "cluster"/>
       <input class = "hide" type = "text" value = '<%= need %>' name = "need"/>
     </form>
+    <button onclick="window.location.href='/editneed/<%=title%>/<%=cluster%>/<%=need%>';" class = "inlineblock editall">Edit Concepts</button>
+    </div>
 
         <% for (var i = 0; i < solutions.length; i++) { %>
-          <form onsubmit="return confirm('Are you sure you want to remove the <%=solutions[i].solution%> solution from this need?');" class = "inlineblock" method = "post" action= "/removesolution">
-            <button class = "deleteneed marginleft">&#10008;</button>
-            <input class = "hide" type = "text" value = '<%=title%>' name = "domain"/>
-            <input class = "hide" type = "text" value = '<%= cluster %>' name = "cluster"/>
-            <input class = "hide" type = "text" value = '<%= need %>' name = "need"/>
-            <input class = "hide" type = "text" value = '<%= solutions[i].solution %>' name = "solution"/>
-          </form>
-          <h4 class = "clusterheader inlineblock"><a onclick="window.location.href='/domains/<%=title%>/<%=cluster%>/<%=need%>/<%= solutions[i].solution %>';">Solution <%=i+1%>:</a></h4> <p class = "solution inlineblock"><%=solutions[i].solution%></p>
+          <p class = "bigger marginleft inlineblock">&#8226;</p>
+          <h4 class = "clusterheader inlineblock"><a onclick="window.location.href='/domains/<%=title%>/<%=cluster%>/<%=need%>/<%= solutions[i].solution %>';">Concept <%=i+1%>:</a></h4> <p class = "solution inlineblock"><%=solutions[i].solution%></p>
             <br>
         <% } %>
 
@@ -49,7 +46,7 @@
       const urlParams = new URLSearchParams(window.location.search);
       const myParam = urlParams.get('re');
       if(myParam == "Duplicate_Solution") {
-        alert("You already added that Solution to this Need!");
+        alert("You already added that Concept to this Need!");
       }
       if(myParam == "Received_Solution") {
         $('#submittedsolution').show();
