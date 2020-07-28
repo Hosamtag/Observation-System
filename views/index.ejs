@@ -4,12 +4,18 @@
   <head>
     <title><%= title %></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-
+    <link rel="shortcut icon" href="/images/dukelogo.png" type="image/png">
     <link rel='stylesheet' href='/stylesheets/style.css' />
 
   </head>
   <header>Observation System</header>
   <body>
-    <a href = "https://oauth.oit.duke.edu/oauth/authorize.php?client_id=musing-wright&client_secret=%=GwU9=7pQNofqaA@GkFV=PcPBJSvouANnRxhxqUB=P7YL@MYu&redirect_uri=http://localhost:3000/domains&response_type=token&state=1123&scope=basic" class = "login">Login</a>
+    <h1>Welcome to Observation System!</h1>
+    <h3 class = "lesswidth">Click below to log into your personalized observation system using your Duke NetID</h3>
+    <a href = "https://oauth.oit.duke.edu/oauth/authorize.php?client_id=musing-wright&client_secret=%=GwU9=7pQNofqaA@GkFV=PcPBJSvouANnRxhxqUB=P7YL@MYu&redirect_uri=https://observation-system.herokuapp.com/domains&response_type=token&state=1123&scope=basic" 
+    class = "login">NetID Login</a>
+    <div class = "guest">
+    <a class = "guestlogin" onclick="window.location.href='/domains';">Or Continue As A Guest</a>
+  </div>
   </body>
 </html>

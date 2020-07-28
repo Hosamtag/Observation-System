@@ -2,13 +2,36 @@
 <html>
   <head>
     <title>Concept Details</title>
+    <link rel="shortcut icon" href="/images/dukelogo.png" type="image/png">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
 
 
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
-  <header>Observation System</header>
+  <header>
+    <div class = "container-fluid">
+      <div class = "row">
+          <div class ="col-4">
+          </div>
+          <div class = "col-4 centertext">
+            Observation System
+          </div>
+          <div class = "col-4 right">
+            <% if(netid == null) { %>
+              Guest &bull;
+              <a href = "https://oauth.oit.duke.edu/oauth/authorize.php?client_id=musing-wright&client_secret=%=GwU9=7pQNofqaA@GkFV=PcPBJSvouANnRxhxqUB=P7YL@MYu&redirect_uri=https://observation-system.herokuapp.com/domains&response_type=token&state=1123&scope=basic" class = "headerlogin">
+                Login</a>
+            <% } else { %>
+              <%= netid %> &bull;
+              <form onsubmit="return confirm('Are you sure you want to log out?');" class = "inlineblock" name="logout" method="post" action="/logout">
+                <button class = "headerlogout" id="btnSubmit" type="submit">Logout</button>
+              </form>
+            <%}%>
+          </div>
+      </div>
+      </div>
+    </header>
   <body>
     <h1>Innovation Target: <%= title %></h1>
     <h2>Cluster: <%= cluster %></h2>
@@ -37,6 +60,7 @@
                 <input type = "text" name = "cluster" class = "hide" value = "<%= cluster %>">
                 <input type = "text" name = "need" class = "hide" value = "<%= need %>">
                 <input type = "text" name = "solution" class = "hide" value = "<%= solution %>">
+                <input class = "hide" type = "text" value = '<%= netid %>' name = "netid"/>
               </div>
               <input type="submit" value="Submit" class="btn btn-primary btn-block">
             </form>

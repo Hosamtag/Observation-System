@@ -2,17 +2,41 @@
 <html>
   <head>
     <title>Domains</title>
+    <link rel="shortcut icon" href="/images/dukelogo.png" type="image/png">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
     <link rel='stylesheet' href='/stylesheets/style.css' />
-  <header>Observation System</header>
-  <body>
+  <header>
+    <div class = "container-fluid">
+      <div class = "row">
+          <div class ="col-4">
+          </div>
+          <div class = "col-4 centertext">
+            Observation System
+          </div>
+          <div class = "col-4 right">
+            <% if(netid == null) { %>
+              Guest &bull;
+              <a href = "https://oauth.oit.duke.edu/oauth/authorize.php?client_id=musing-wright&client_secret=%=GwU9=7pQNofqaA@GkFV=PcPBJSvouANnRxhxqUB=P7YL@MYu&redirect_uri=https://observation-system.herokuapp.com/domains&response_type=token&state=1123&scope=basic" class = "headerlogin">
+                Login</a>
+            <% } else { %>
+              <%= netid %> &bull;
+              <form onsubmit="return confirm('Are you sure you want to log out?');" class = "inlineblock" name="logout" method="post" action="/logout">
+                <button class = "headerlogout" id="btnSubmit" type="submit">Logout</button>
+              </form>
+            <%}%>
+          </div>
+      </div>
+      </div>
+    </header>
+  <body onload = "sendLoginHash()">
+
     <h1>Innovation Targets</h1>
     <form id="formAddDomain" name="adddomain" method="post" action="/adddomain">
-      <input id="inputDomain" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" type="text" placeholder="Innovation Target" name="domain" required/>
+      <input id="inputDomain" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" type="text" placeholder="Add New Target" name="domain" required/>
       <button class = "urlpage" id="btnSubmit" type="submit">Submit</button>
       <p id = "submitteddomain" class = "inlineblock submitted">Received &#10004;</p>
       <br>
@@ -28,9 +52,6 @@
             <% for (var i = 0; i < targets.length; i++) { %>
               <div class = "center">
                 <button onclick="window.location.href='domains/<%=targets[i].domain%>';" class = "inlineblock ideabutton"><%=targets[i].domain%></button>
-                <!--<form onsubmit="return confirm('Are you sure you want to remove the <%=targets[i].domain%> domain?');" class = "inlineblock" method = "post" action= "/removequery">
-                  <button class = "inlineblock delete">&#10008;</button> <input class = "hide" type = "text" value = '<%=targets[i].domain%>' name = "domain"/>
-                </form>-->
               </div>
               
             <% } %>
@@ -47,6 +68,35 @@
         if(myParam== "Domain_Received"){
           $('#submitteddomain').show();
         }
-      </script>
+    function sendLoginHash() {
+      var login_hash = window.location.hash;
+      if(login_hash){
+        var xhr = new window.XMLHttpRequest();
+        xhr.open('POST', '/', true);
+        xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+        xhr.onreadystatechange = function () {
+          if(xhr.readyState === XMLHttpRequest.DONE){
+            var status = xhr.status;
+            if(status === 0 || (status >= 200 && status < 400)){
+              window.location.replace("/domains");
+            }else{
+              console.log('request failed my brother' + status);
+            }
+          }
+        };
+        xhr.send(JSON.stringify(parseQueryString(login_hash.split('#')[1])));
+      }
+    }
+    function parseQueryString(query) {
+      var parsed = {};
+      query.replace(
+        new RegExp('([^?=&]+)(=([^&]*))?', 'g'),
+          function ($0, $1, $2, $3) {
+            parsed[decodeURIComponent($1)] = decodeURIComponent($3);
+          }
+      );
+      return parsed;
+    };
+  </script>
   </body>
 </html>

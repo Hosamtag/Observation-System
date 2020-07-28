@@ -40,7 +40,7 @@ def create_wordcloud(topic):
     stopwords= stopwords)
 
     wc.generate(newText)
-
     wc.to_file(os.path.join(currdir,sys.argv[1]+ ".png"))
+    
 
 create_wordcloud(sys.argv[1])
